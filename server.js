@@ -135,8 +135,14 @@ app.get('/api/bootstrap', async (req, res) => {
 app.get('/healthz', (req, res) => res.json({ ok: true }));
 
 // Front-end estático (o arquivo index.html com todo o app).
-app.use(express.static(path.join(__dirname, 'public')));
+// Cache-Control: no-cache força o navegador a sempre checar se há uma versão
+// nova no servidor antes de usar a guardada, para que atualizações do app
+// apareçam na hora, sem depender do usuário limpar o cache manualmente.
+app.use(express.static(path.join(__dirname, 'public'), {
+  setHeaders: (res) => res.setHeader('Cache-Control', 'no-cache')
+}));
 app.get('*', (req, res) => {
+  res.setHeader('Cache-Control', 'no-cache');
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
