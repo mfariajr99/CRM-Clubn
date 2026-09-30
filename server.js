@@ -17,7 +17,12 @@ const pool = new Pool({
   ssl: connectionString ? { rejectUnauthorized: false } : false
 });
 
-const TABLES = ['calls', 'propostas', 'diagnosticos'];
+/* Prefixo "clubn_" nas tabelas: como este banco pode ser compartilhado com
+   outros projetos (ex: Dash Loyal, Dash Prospecção) no mesmo Postgres
+   gratuito do Render, isso evita qualquer conflito de nomes. */
+const TABLE_PREFIX = 'clubn_';
+const ENTITIES = ['calls', 'propostas', 'diagnosticos'];
+const TABLES = ENTITIES.map(e => TABLE_PREFIX + e);
 
 async function migrate() {
   for (const table of TABLES) {
@@ -29,7 +34,7 @@ async function migrate() {
       );
     `);
   }
-  console.log('Migração concluída: tabelas prontas (calls, propostas, diagnosticos).');
+  console.log('Migração concluída: tabelas prontas (' + TABLES.join(', ') + ').');
 }
 
 function crudRoutes(table) {
@@ -103,9 +108,11 @@ function crudRoutes(table) {
   return router;
 }
 
-for (const table of TABLES) {
-  app.use(`/api/${table}`, crudRoutes(table));
-}
+// A URL da API continua limpa (/api/calls, /api/propostas...), só a tabela
+// de verdade no banco é que leva o prefixo clubn_.
+ENTITIES.forEach((entity, i) => {
+  app.use(`/api/${entity}`, crudRoutes(TABLES[i]));
+});
 
 // Carrega tudo de uma vez só, para o app abrir rápido.
 app.get('/api/bootstrap', async (req, res) => {

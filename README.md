@@ -12,19 +12,22 @@ porque tudo é salvo num banco de dados compartilhado.
 
 ## Deploy (GitHub + Render) — passo a passo
 
+Este projeto usa um banco de dados PostgreSQL já existente na sua conta do
+Render (o plano gratuito só permite 1 banco por conta, então reaproveitamos
+o que já está lá em vez de criar outro). As tabelas usadas aqui têm o
+prefixo `clubn_`, então não têm risco de conflitar com as de outros projetos
+que dividem esse mesmo banco.
+
 1. Suba esta pasta inteira para um repositório novo no GitHub (pode usar o
    "Upload files" pelo navegador, arrastando todos os arquivos e pastas).
-2. No Render, clique em **"New +" → "Blueprint"**.
-3. Escolha o repositório que você acabou de criar.
-4. O Render vai ler o arquivo `render.yaml` desta pasta e configurar **sozinho**:
-   - um banco de dados PostgreSQL gratuito
-   - um servidor web (Node.js) já conectado a esse banco
-5. Clique em **"Apply"**. Em alguns minutos os dois ficam no ar.
+2. No Render, abra o banco de dados PostgreSQL que você já tem (de outro
+   projeto) e copie a **"Internal Database URL"** (na aba de conexão/Info).
+3. Clique em **"New +" → "Blueprint"** e escolha este repositório.
+4. Quando o Render pedir o valor da variável `DATABASE_URL`, cole a URL que
+   você copiou no passo 2.
+5. Clique em **"Apply"**. Em alguns minutos o servidor fica no ar.
 6. O link do site aparece no serviço do tipo "Web Service" (algo como
    `https://clubn-diagnostico.onrender.com`).
-
-Pronto — não precisa configurar nada manualmente (nem senha de banco, nem
-variáveis de ambiente): o `render.yaml` já faz essa ligação automaticamente.
 
 ### Atualizando o app depois
 

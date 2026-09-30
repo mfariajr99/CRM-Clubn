@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: crm-clubn
+    name: clubn-diagnostico
     runtime: node
     plan: free
     buildCommand: npm install
